@@ -1,0 +1,40 @@
+//@version=6
+strategy("Mean Reversion", overlay=true)
+
+// Input Parameters
+length = input(20, title="Moving Average Length")
+z_threshold = input(2, title="Z-Score Threshold")
+stop_loss_sd = input(2, title="Stop Loss (in SD)")
+
+// Calculate Moving Average and Standard Deviation
+ma = ta.sma(close, length)
+std_dev = ta.stdev(close, length)
+
+// Compute Z-Score
+z_score = (close - ma) / std_dev
+
+// Entry Conditions
+long_entry = z_score < -z_threshold
+short_entry = z_score > z_threshold
+
+// Stop Loss and Take Profit
+long_sl = close - stop_loss_sd * std_dev
+long_tp = ma
+short_sl = close + stop_loss_sd * std_dev
+short_tp = ma
+
+// Execute Trades using IF conditions
+if long_entry
+    strategy.entry("Long", strategy.long)
+    strategy.exit("Long Exit", from_entry="Long", limit=long_tp, stop=long_sl)
+
+if short_entry
+    strategy.entry("Short", strategy.short)
+    strategy.exit("Short Exit", from_entry="Short", limit=short_tp, stop=short_sl)
+
+// Plot indicators
+plot(ma, color=color.blue, title="Moving Average")
+plot(ma + z_threshold * std_dev, color=color.red, title="+2 SD")
+plot(ma - z_threshold * std_dev, color=color.green, title="-2 SD")
+plot(ma + stop_loss_sd * std_dev, color=color.purple, title="Stop Loss Line (Upper)")
+plot(ma - stop_loss_sd * std_dev, color=color.purple, title="Stop Loss Line (Lower)")
