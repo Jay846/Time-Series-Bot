@@ -19,7 +19,7 @@ This repo contains a mean reversion trading strategy implemented in TradingView'
 
 ## Backtest Results
 
-![Backtest Chart](Nifty50perfformance.png)
+![Backtest Chart](Nifty50performance.png)
 
 ## Screenshots
 
